@@ -1,0 +1,136 @@
+<div class="card mb-3"
+     #card>
+    <div class="card-header  card-header-danger">
+        <h4 class="card-title">Update {{title}}</h4>
+    </div>
+    <div class="card-body" style="height: calc(100vh - 320px);overflow: auto;">
+        <form #form="ngForm">
+            <div class="row">
+
+                <!--type-->
+                <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Type</mat-label>
+                        <mat-select name="type" required [(ngModel)]="data.type" (selectionChange)="updateSelectedType($event)">
+                            <mat-option [value]="'income'">INCOME</mat-option>
+                            <mat-option [value]="'expenses'">EXPENSES</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <!--name-->
+                <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                        <input matInput autocomplete="off" name="name" required [(ngModel)]="data.name" placeholder="Name">
+                    </mat-form-field>
+                </div>
+
+                <!--amount-->
+                <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                        <input matInput autocomplete="off" name="amount" required [(ngModel)]="data.amount" placeholder="Amount">
+                    </mat-form-field>
+                </div>
+
+                <!--categoriesTable -->
+                <div class="col-md-6" *ngIf="categories$ | async as categories">
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Category</mat-label>
+                        <mat-select name="category" [(ngModel)]="data.category">
+                            <mat-option [value]="null"></mat-option>
+                            <mat-option *ngFor="let option of categories" [value]="option.id">{{option.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <!--startDate-->
+                <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                        <mat-label>{{data.repeat==NEVER_REPEAT_ID ? 'Due Date' : 'Start Date'}}</mat-label>
+                        <input matInput autocomplete="off" name="startDate"
+                               #startDate
+                               [required]="data.repeat!=NEVER_REPEAT_ID"
+                               [(ngModel)]="data.startDate"
+                               (dateChange)="updateMinDate(data.startDate)"
+                               [matDatepicker]="startDatePicker"
+                               [max]="maxDate">
+                        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startDatePicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <!--endDate-->
+                <div class="col-md-6" [hidden]="data.repeat==NEVER_REPEAT_ID">
+                    <mat-form-field class="example-full-width">
+                        <mat-label>End Date</mat-label>
+                        <input matInput autocomplete="off"
+                               name="endDate"
+                               [required]="data.repeat!=NEVER_REPEAT_ID"
+                               [(ngModel)]="data.endDate"
+                               #endDate
+                               [matDatepicker]="endDatePicker"
+                               [min]="minDate"
+                               (dateChange)="updateMaxDate(data.endDate)">
+                        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #endDatePicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <!--exemptions-->
+                <ng-container *ngIf="data.type == 'expenses'">
+                    <div class="col-md-6" *ngIf="taxExemptionsTable.data | async as taxExemptions">
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Tax Exemptions</mat-label>
+                            <mat-select name="exemptions" #exemptions [(ngModel)]="data.exemptions">
+                                <mat-option *ngFor="let option of taxExemptions" [value]="option.id">{{option.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </ng-container>
+
+                <!--remarks-->
+                <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                        <input matInput autocomplete="off" name="remarks" [(ngModel)]="data.remarks" placeholder="Remarks">
+                    </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <label class="col-12 mb-0 pb-0">Repeat Every</label>
+                        <!--interval-->
+                        <div class="col-4" [hidden]="data.repeat==NEVER_REPEAT_ID" *ngIf="intervalOptions$ | async as intervalOptions">
+                            <mat-form-field class="example-full-width">
+                                <mat-select name="interval" #interval [(ngModel)]="data.interval" required>
+                                    <mat-option *ngFor="let option of intervalOptions" [value]="option">{{option}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <!--repeat-->
+                        <div [class.col-12]="data.repeat==NEVER_REPEAT_ID" [class.col-8]="data.repeat!=NEVER_REPEAT_ID" *ngIf="repeatOptionsTable.data | async as repeatOptions">
+                            <mat-form-field class="example-full-width">
+                                <mat-select name="repeat" #repeat (ngModelChange)="updateSelectedRepeatOption($event,repeatOptions)" [(ngModel)]="data.repeat" required>
+                                    <mat-option *ngFor="let option of repeatOptions" [value]="option.id">
+                                        {{option.name}}{{data.interval>1 ? 's' : ''}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-right">
+    <button mat-raised-button (click)="cancelClick()"
+            class="btn btn-default">cancel
+    </button>
+    <button mat-raised-button [disabled]="form.invalid || isDataModified()" (click)="saveClick()"
+            class="btn btn-primary">Save
+    </button>
+</div>

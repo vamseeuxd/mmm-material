@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "monthly-money-manager-d772a": {
+      "hosting": {
+        "material-dashboard-angular": [
+          "monthly-money-manager-d772a"
+        ]
+      }
+    }
+  }
+}

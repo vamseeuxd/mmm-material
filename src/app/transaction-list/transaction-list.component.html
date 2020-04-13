@@ -1,0 +1,135 @@
+<div class="main-content">
+    <div class="container-fluid" *ngIf="userDetails$ | async as user; else userProfileBlock;">
+        <div class="row"
+             *ngIf="transactionType$ | async as transactionType">
+            <!--<div class="col-lg-6 col-md-12 offset-md-3 offset-lg-3">-->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header card-header-tabs card-header-danger">
+                        <h4 class="card-title">Transaction List</h4>
+                        <p class="card-category">Add or Edit or Delete Transaction List</p>
+                        <div class="nav-tabs-navigation">
+                            <div class="nav-tabs-wrapper">
+                                <ul class="nav nav-tabs  nav-fill"
+                                    data-tabs="tabs">
+                                    <li class="nav-item">
+                                        <a mat-button
+                                           class="nav-link w-100"
+                                           (click)="setTransactionType(TRANSACTION_TYPE.INCOME)"
+                                           [class.active]="transactionType==TRANSACTION_TYPE.INCOME"
+                                           data-toggle="tab">
+                                            <i class="material-icons">attach_money</i> Income
+                                            <div class="ripple-container"></div>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a mat-button
+                                           class="nav-link w-100"
+                                           (click)="setTransactionType(TRANSACTION_TYPE.EXPENSES)"
+                                           [class.active]="transactionType==TRANSACTION_TYPE.EXPENSES"
+                                           data-toggle="tab">
+                                            <i class="material-icons">money_off</i> Expenses
+                                            <div class="ripple-container"></div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" style="height: calc(100vh - 400px);overflow-y: auto;">
+                        <!--<pre *ngIf="transactionsTable.data | async as data">{{data|json}}</pre>-->
+                        <div class="tab-content">
+                            <div class="tab-pane active">
+                                <table class="table"
+                                       *ngIf="filteredTransactions$ | async as transactions">
+                                    <tbody>
+                                    <tr *ngFor="let transaction of transactions">
+                                        <!--<td>
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input"
+                                                           [checked]="transaction.settled"
+                                                           type="checkbox"
+                                                           value="">
+                                                    <span class="form-check-sign">
+                                                          <span class="check"></span>
+                                                      </span>
+                                                </label>
+                                            </div>
+                                        </td>-->
+                                        <td>
+                                            {{transaction.name}}: <strong>{{ transaction.amount | currency}}</strong>
+                                        </td>
+                                        <td class="td-actions text-right d-block">
+                                            <button mat-raised-button
+                                                    type="button"
+                                                    matTooltip="Edit Task"
+                                                    (click)="openDialog(transaction)"
+                                                    [matTooltipPosition]="'above'"
+                                                    class="btn btn-primary btn-link btn-sm btn-just-icon">
+                                                <i class="material-icons">edit</i>
+                                            </button>
+                                            <button mat-raised-button
+                                                    type="button"
+                                                    (click)="deleteTransaction(transaction)"
+                                                    matTooltip="Remove"
+                                                    [matTooltipPosition]="'above'"
+                                                    class="btn btn-danger btn-link btn-sm btn-just-icon">
+                                                <i class="material-icons">close</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <form class="card-footer"
+                          #form="ngForm"
+                          *ngIf="newTransactions"
+                          (submit)="addTransaction(form.value,form,transactionName,transactionType);">
+                        <div class="row mt-3 w-100">
+                            <div class="col-6">
+                                <mat-form-field class="example-full-width">
+                                    <input matInput
+                                           #transactionName
+                                           name="name"
+                                           required
+                                           autofocus
+                                           autocomplete="off"
+                                           [placeholder]="newTransactions.type+' Name'"
+                                           [(ngModel)]="newTransactions.name"
+                                           type="text">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-6">
+                                <mat-form-field class="example-full-width">
+                                    <input matInput
+                                           name="amount"
+                                           required
+                                           autocomplete="off"
+                                           [placeholder]="newTransactions.type+' Amount'"
+                                           [(ngModel)]="newTransactions.amount"
+                                           type="number">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-12">
+                                <!--<pre>{{form.value|json}}</pre>-->
+                                <button mat-raised-button
+                                        [disabled]="form.invalid"
+                                        type="submit"
+                                        class="w-100 btn btn-danger">Add {{newTransactions.type}}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #userProfileBlock>
+    <app-user-profile></app-user-profile>
+</ng-template>

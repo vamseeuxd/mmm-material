@@ -1,0 +1,31 @@
+<div class="main-content">
+    <div class="container-fluid d-flex justify-content-center align-items-center">
+        <div class="card card-profile" style="max-width: 400px;" *ngIf="auth.user | async as user; else elseBlock">
+            <div class="card-avatar">
+                <a>
+                    <img class="img" [src]="user.photoURL"/>
+                </a>
+            </div>
+            <div class="card-body">
+                <ng-container>
+                    <h6 class="card-category text-gray">{{user.email}}</h6>
+                    <h4 class="card-title">{{user.displayName}}</h4>
+                    <p class="card-description">
+                        {{user.phoneNumber}}
+                        <!--Don't be scared of the truth because we need to restart the human foundation in truth And I love
+                        you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...-->
+                    </p>
+                    <button class="btn btn-danger btn-round" (click)="logout()">Logout</button>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #elseBlock>
+    <div class="card card-profile" style="max-width: 400px;">
+        <div class="card-body">
+            <button class="btn btn-danger btn-round" (click)="login()">Login with Google</button>
+        </div>
+    </div>
+</ng-template>

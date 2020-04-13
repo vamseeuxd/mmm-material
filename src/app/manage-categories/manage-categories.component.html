@@ -1,0 +1,154 @@
+<div class="main-content">
+    <div class="container-fluid"
+         *ngIf="auth.user | async as user; else userProfileBlock;">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title ">Manage Categories</h4>
+                        <p class="card-category">Add or Edit Income or Expenses Categories </p>
+                        <div class="nav-tabs-navigation">
+                            <div class="nav-tabs-wrapper">
+                                <ul class="nav nav-tabs  nav-fill"
+                                    data-tabs="tabs">
+                                    <li class="nav-item">
+                                        <a mat-button
+                                           class="nav-link w-100"
+                                           (click)="setTransactionType(TRANSACTION_TYPE.INCOME)"
+                                           [class.active]="transactionType==TRANSACTION_TYPE.INCOME"
+                                           data-toggle="tab">
+                                            <i class="material-icons">attach_money</i> Income
+                                            <div class="ripple-container"></div>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a mat-button
+                                           class="nav-link w-100"
+                                           (click)="setTransactionType(TRANSACTION_TYPE.EXPENSES)"
+                                           [class.active]="transactionType==TRANSACTION_TYPE.EXPENSES"
+                                           data-toggle="tab">
+                                            <i class="material-icons">money_off</i> Expenses
+                                            <div class="ripple-container"></div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body"
+                         style="height: calc(100vh - 320px);overflow: auto;"
+                         *ngIf="categories$ | async as categories">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class=" text-primary">
+                                <th>Name</th>
+                                <!--<th>Type</th>-->
+                                <th class="text-center"><!--Actions--></th>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let category of categories">
+                                    <td>{{category.name}}</td>
+                                    <!--<td>{{category.type}}</td>-->
+                                    <td>
+                                        <div class="text-center"
+                                             *ngIf="category.uid!=='mmm'">
+                                            <button mat-raised-button
+                                                    type="button"
+                                                    (click)="categoryToEdit = category"
+                                                    matTooltip="Edit Category"
+                                                    [matTooltipPosition]="'above'"
+                                                    class="btn btn-primary btn-link btn-sm btn-just-icon">
+                                                <i class="material-icons">edit</i>
+                                            </button>
+                                            <button mat-raised-button
+                                                    type="button"
+                                                    (click)="deleteTransaction(category.id)"
+                                                    matTooltip="Delete Category"
+                                                    [matTooltipPosition]="'above'"
+                                                    class="btn btn-primary btn-link btn-sm btn-just-icon">
+                                                <i class="material-icons">delete</i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <form class="card-footer"
+                          #form="ngForm"
+                          (submit)="addCategory(form.value, form, categoryName, user.providerData[0].uid);">
+                        <div class="row">
+                            <div class="col-8">
+                                <mat-form-field class="example-full-width">
+                                    <input matInput
+                                           #categoryName
+                                           name="name"
+                                           required
+                                           autofocus
+                                           autocomplete="off"
+                                           [placeholder]="transactionType + ' Category Name'"
+                                           ngModel
+                                           type="text">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-4 text-right">
+                                <button mat-raised-button
+                                        [disabled]="form.invalid"
+                                        type="submit"
+                                        class="btn btn-danger">Add
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #userProfileBlock>
+    <app-user-profile></app-user-profile>
+</ng-template>
+
+
+<div class="fixed-top vh-100 vw-100 d-flex justify-content-center"
+     style="background-color: rgba(255,255,255,0.9);"
+     *ngIf="categoryToEdit">
+    <div class="card" style="width: 90vw;height: 188px;margin: auto;max-width: 400px;">
+        <div class="card-header card-header-danger">
+            Update {{transactionType|uppercase}} Category
+        </div>
+        <form #form="ngForm"
+              (submit)="updateCategory(form,form.value.name)"
+              class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <mat-form-field class="example-full-width">
+                        <input matInput
+                               #categoryName
+                               name="name"
+                               required
+                               autofocus
+                               autocomplete="off"
+                               [placeholder]="transactionType + ' Category Name'"
+                               [ngModel]="categoryToEdit.name"
+                               type="text">
+                    </mat-form-field>
+                </div>
+                <div class="col-12 text-right">
+                    <button mat-raised-button
+                            (click)="categoryToEdit=null"
+                            class="btn btn-dark">Cancel
+                    </button>
+                    <button mat-raised-button
+                            [disabled]="form.invalid"
+                            type="submit"
+                            class="btn btn-danger">Update
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
