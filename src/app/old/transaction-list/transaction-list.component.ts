@@ -9,7 +9,7 @@ import {TransactionType} from '../value-objects/transaction-type-enum';
 import {FireBaseTableService} from '../services/fire-base-table.service';
 import * as _ from 'lodash';
 import {Router} from '@angular/router';
-import {BusyIndicatorService} from '../services/busy-indicator.service';
+import {BusyIndicatorService} from '../../utils/busy-indicator.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {UserInfo} from 'firebase';
 import {AngularFirestore} from '@angular/fire/firestore';

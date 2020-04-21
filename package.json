@@ -9,6 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "component": "ng g c mmm/",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && ng serve -o"
   },
   "engines": {
@@ -40,18 +41,19 @@
     "classlist.js": "1.1.20150312",
     "core-js": "3.1.3",
     "express": "4.17.1",
+    "firebase": ">= 5.5.7 <8",
     "googleapis": "40.0.0",
     "hammerjs": "2.0.8",
     "jquery": "3.4.1",
     "lodash": "^4.17.15",
-    "moment": "2.24.0",
+    "moment": "^2.24.0",
+    "moment-range": "^4.0.2",
     "perfect-scrollbar": "1.1.0",
     "popper.js": "1.15.0",
     "rxjs": "6.5.2",
     "rxjs-compat": "6.5.2",
     "web-animations-js": "2.3.1",
-    "zone.js": "0.10.2",
-    "firebase": ">= 5.5.7 <8"
+    "zone.js": "0.10.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.900.5",

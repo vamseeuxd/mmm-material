@@ -145,8 +145,8 @@ material-dashboard-angular
 │   │   ├── table-list
 │   │   │   ├── table-list.component.css
 │   │   │   ├── table-list.component.html
-│   │   │   ├── manage-categories.component.spec.ts
-│   │   │   └── manage-categories.component.ts
+│   │   │   ├── database-testing.component.spec.ts
+│   │   │   └── database-testing.component.ts
 │   │   ├── typography
 │   │   │   ├── typography.component.css
 │   │   │   ├── typography.component.html

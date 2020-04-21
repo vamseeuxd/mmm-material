@@ -6,7 +6,7 @@ import {map, switchMap} from 'rxjs/operators';
 import {ITransaction} from '../value-objects/transaction-interface';
 import {RepeatOption} from '../value-objects/repeat-option';
 import {FireBaseTableService} from '../services/fire-base-table.service';
-import {BusyIndicatorService} from '../services/busy-indicator.service';
+import {BusyIndicatorService} from '../../utils/busy-indicator.service';
 import {TransactionType} from '../value-objects/transaction-type-enum';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
@@ -97,6 +97,7 @@ export class AdvancedTransactionFormComponent implements OnInit {
     }
 
     setInitData() {
+        debugger;
         this.data = JSON.parse(JSON.stringify(this.data));
         this.masterData = JSON.parse(JSON.stringify(this.data));
         if (this.data.type) {
@@ -108,12 +109,14 @@ export class AdvancedTransactionFormComponent implements OnInit {
             this.selectedRepeatOptionActions.next(this.selectedRepeatOption);
         }
         if (this.data.startDate) {
-            this.data.startDate = new Date(this.data.startDate).toISOString();
-            this.masterData.startDate = new Date(this.data.startDate).toISOString();
+            const seconds = this.data.startDate.seconds;
+            this.data.startDate = new Date(seconds * 1000).toISOString();
+            this.masterData.startDate = new Date(seconds * 1000).toISOString();
         }
         if (this.data.endDate) {
-            this.data.endDate = new Date(this.data.endDate).toISOString();
-            this.masterData.endDate = new Date(this.data.endDate).toISOString();
+            const seconds = this.data.endDate.seconds;
+            this.data.endDate = new Date(seconds * 1000).toISOString();
+            this.masterData.endDate = new Date(seconds * 1000).toISOString();
         }
         this.title = this.data.name;
     }
@@ -135,8 +138,8 @@ export class AdvancedTransactionFormComponent implements OnInit {
     saveClick(): void {
         const isConfirmed = confirm('Are you sure! Do you want to Save this Transaction');
         if (isConfirmed) {
-            this.data.startDate = this.getFormattedDate(this.data.startDate);
-            this.data.endDate = this.getFormattedDate(this.data.endDate);
+            this.data.startDate = new Date(this.getFormattedDate(this.data.startDate));
+            this.data.endDate = new Date(this.getFormattedDate(this.data.endDate));
             this.dialogRef.close(this.data);
         }
     }

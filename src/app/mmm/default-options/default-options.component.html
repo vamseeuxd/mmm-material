@@ -1,0 +1,198 @@
+<div class="main-content"
+     *ngIf="transactionOptions$ | async as transaction">
+    <!--<pre>{{transaction|json}}</pre>-->
+    <div class="row">
+        <form class="col-12"
+              #form="ngForm">
+            <div class="row bg-white m-5 pt-3 pb-3">
+
+
+                <!-- Transaction Type -->
+                <div class="col-md-6"
+                     *ngIf="types$ | async as types">
+                    <mat-form-field class="w-100">
+                        <mat-label>TRANSACTION TYPE</mat-label>
+                        <mat-select required
+                                    name="type"
+                                    autocomplete="off"
+                                    placeholder="Transaction Type"
+                                    [ngModel]="transaction.type"
+                                    (selectionChange)="onTransactionTypeChange($event)">
+                            <mat-option *ngFor="let type of types"
+                                        [value]="type.id">{{type.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+
+                <!-- Transaction Name -->
+                <div class="col-md-6">
+                    <mat-form-field class="w-100">
+                        <mat-label>{{form.value.type|uppercase}} NAME</mat-label>
+                        <input matInput
+                               required
+                               name="name"
+                               autocomplete="off"
+                               [ngModel]="transaction.name"
+                               placeholder="Transaction Name">
+                    </mat-form-field>
+                </div>
+
+
+                <!-- Transaction Amount -->
+                <div class="col-md-6">
+                    <mat-form-field class="w-100">
+                        <mat-label>{{form.value.type|uppercase}}  AMOUNT</mat-label>
+                        <input matInput
+                               required
+                               type="number"
+                               name="amount"
+                               autocomplete="off"
+                               [ngModel]="transaction.amount"
+                               placeholder="Transaction Amount">
+                    </mat-form-field>
+                </div>
+
+
+                <!-- Transaction Category -->
+                <div class="col-md-6"
+                     *ngIf="categories$ | async as categories">
+                    <mat-form-field class="w-100">
+                        <mat-label>{{form.value.type|uppercase}}  CATEGORY</mat-label>
+                        <mat-select required
+                                    name="category"
+                                    autocomplete="off"
+                                    placeholder="Transaction Category"
+                                    [ngModel]="transaction.category">
+                            <mat-option *ngFor="let category of categories"
+                                        [value]="category.id">{{category.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <ng-container *ngIf="form.value.repeat!=='never'">
+                            <div class="col-4" *ngIf="intervalOptions$ | async as intervalOptions">
+                                <mat-form-field class="w-100">
+                                    <mat-label>REPEAT {{form.value.type|uppercase}} EVERY</mat-label>
+                                    <mat-select required
+                                                name="interval"
+                                                autocomplete="off"
+                                                [ngModel]="transaction.interval">
+                                        <mat-option *ngFor="let intervalOption of intervalOptions" [value]="intervalOption">{{intervalOption}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngIf="repeatOptions$ | async as repeatOptions">
+                            <div  [class.col-8]="form.value.repeat!=='never'" [class.col-12]="form.value.repeat==='never'">
+                                <mat-form-field class="w-100">
+                                    <mat-label *ngIf="form.value.repeat==='never'">REPEAT {{form.value.type|uppercase}} EVERY</mat-label>
+                                    <mat-select required
+                                                name="repeat"
+                                                autocomplete="off"
+                                                (selectionChange)="onRepeatOptionsChange($event)"
+                                                [ngModel]="transaction.repeat">
+                                        <mat-option *ngFor="let repeatOption of repeatOptions"
+                                                    [value]="repeatOption.id">{{repeatOption.name}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+                <!-- Transaction Start Date -->
+                <div class="col-md-6" *ngIf="form.value.repeat!=='never'">
+                    <mat-form-field class="w-100">
+                        <mat-label>{{form.value.type|uppercase}}  START DATE</mat-label>
+                        <input required
+                               name="startDate"
+                               matInput
+                               autocomplete="off"
+                               [matDatepicker]="startDate"
+                               [ngModel]="(transaction.startDate.seconds*1000)|date"
+                               placeholder="Transaction Start Date">
+                        <mat-datepicker-toggle matSuffix
+                                               [for]="startDate"></mat-datepicker-toggle>
+                        <mat-datepicker #startDate></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+
+                <!-- Transaction End Date -->
+                <div class="col-md-6" *ngIf="form.value.repeat!=='never'">
+                    <mat-form-field class="w-100">
+                        <mat-label>{{form.value.type|uppercase}}  END DATE</mat-label>
+                        <input required
+                               name="endDate"
+                               matInput
+                               autocomplete="off"
+                               [matDatepicker]="endDate"
+                               [ngModel]="(transaction.endDate.seconds*1000)|date"
+                               placeholder="Transaction End Date">
+                        <mat-datepicker-toggle matSuffix
+                                               [for]="endDate"></mat-datepicker-toggle>
+                        <mat-datepicker #endDate></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+
+                <!-- Transaction Exemptions -->
+                <div class="col-md-6" *ngIf="form.value.type==='expenses'">
+                    <mat-form-field class="w-100" *ngIf="taxExemptions$ | async as taxExemptions">
+                        <mat-label>TAX EXEMPTIONS UNDER</mat-label>
+                        <mat-select required
+                                    name="exemptions"
+                                    autocomplete="off"
+                                    placeholder="Transaction Category"
+                                    [ngModel]="transaction.exemptions">
+                            <mat-option *ngFor="let taxExemption of taxExemptions"
+                                        [value]="taxExemption.id">{{taxExemption.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+
+                <!-- Transaction Remarks -->
+                <div class="col-md-6">
+                    <mat-form-field class="w-100">
+                        <mat-label>{{form.value.type|uppercase}}  REMARKS</mat-label>
+                        <input name="remarks"
+                               matInput
+                               autocomplete="off"
+                               [ngModel]="transaction.remarks"
+                               placeholder="Transaction Remarks">
+                    </mat-form-field>
+                </div>
+                <div class="col-12 text-right">
+                    <button mat-raised-button
+                            class="mr-3"
+                            color="warn"
+                            [disabled]="form.invalid"
+                            (click)="saveTransaction(form,transaction)">SAVE
+                    </button>
+                    <button mat-raised-button type="button" (click)="resetForm(form,transaction)">CANCEL</button>
+                </div>
+            </div>
+        </form>
+        <!--<div class="col-12">
+            <pre>{{form.value|json}}</pre>
+        </div>-->
+    </div>
+</div>
+
+<!--
+amount  :   ""
+category  :   ""
+endDate  :   ""
+exemptions  :   "tmoJWDCNMNI47IJMP5ah"
+interval  :   1
+name  :   ""
+remarks  :   ""
+repeat  :   "aPn6tnYI3bWxyzRglunz"
+startDate  :   ""
+type  :   "income"
+-->

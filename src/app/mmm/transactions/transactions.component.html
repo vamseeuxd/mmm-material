@@ -1,0 +1,82 @@
+<!--<pre>{{transactions$|async|json}}</pre>-->
+<div class="main-content">
+    <div class="row">
+        <div class="col-12"
+             *ngIf="selectedTypeForList$ | async as selectedType">
+            <nav mat-tab-nav-bar
+                 class="bg-white"
+                 *ngIf="types$ | async as types">
+                <a mat-tab-link
+                   *ngFor="let type of types"
+                   (click)="transactionTypeService.setSelectedTypeForList(type.id);transactionTypeService.setSelectedType(type.id)"
+                   [active]="type.id === selectedType"> {{type.name}} </a>
+            </nav>
+        </div>
+        <div class="col-12 mb-5"
+             *ngIf="transactions$ | async as transactions">
+            <mat-accordion>
+                <mat-expansion-panel *ngFor="let transaction of transactions"
+                                     [expanded]="selectedTransactionId==transaction.id"
+                                     (closed)="selectedTransactionId=''"
+                                     (opened)="selectedTransactionId=transaction.id">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <div class="w-100 d-flex justify-content-between align-items-center">
+                                <strong class="text-primary">{{transaction.name}}</strong>
+                                <strong class="text-success">{{transaction.amount|currency}}</strong>
+                            </div>
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            <!--<div class="w-100 d-flex justify-content-between align-items-center">
+                                <button mat-icon-button color="warn" aria-label="Example icon button with a heart icon">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>-->
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div style="max-height: 300px;overflow-y: auto;">
+                        <mat-card class="mb-1 border border-bottom-0"
+                                  *ngFor="let i of transaction.breakups;let ind=index">
+                            <div class="w-100 d-flex justify-content-between align-items-center">
+                                <strong>{{ind + 1}}, {{i|date}}</strong>
+                                <button mat-stroked-button
+                                        color="primary">Mark as Paid
+                                </button>
+                            </div>
+                        </mat-card>
+                    </div>
+                    <button mat-raised-button
+                            color="primary"
+                            (click)="openManageTransactionModal(transaction,true,'transaction/'+transaction.id)">
+                        Edit {{transaction.type}}</button>
+                    <button mat-raised-button
+                            class="ml-3"
+                            color="warn"
+                            (click)="deleteTodo(transaction.id)">Delete {{transaction.type}}</button>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+    </div>
+    <button mat-fab
+            *ngIf="defaultTransaction$ | async as defaultTransaction"
+            color="primary"
+            style="position: fixed;bottom: 30px;right: 30px;"
+            (click)="openManageTransactionModal(defaultTransaction,false,transactionsService.DEFAULT_TRANSACTION_PATH)">
+        <i class="fa fa-plus"></i>
+    </button>
+</div>
+
+
+<!--
+amount  :   ""
+category  :   ""
+endDate  :   ""
+exemptions  :   "tmoJWDCNMNI47IJMP5ah"
+interval  :   1
+name  :   ""
+remarks  :   ""
+repeat  :   "aPn6tnYI3bWxyzRglunz"
+startDate  :   ""
+type  :   "income"
+-->

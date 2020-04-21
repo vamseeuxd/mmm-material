@@ -9,8 +9,8 @@ export interface ITransaction {
     category?: string;
     interval?: number;
     repeat?: string;
-    startDate?: string;
-    endDate?: string;
+    startDate?: any;
+    endDate?: any;
     exemptions?: string;
     remarks?: string;
 }

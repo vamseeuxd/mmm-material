@@ -1,0 +1,192 @@
+<div class="main-content">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6"></div>
+                <div class="row"></div>
+            </div>
+            <div class="form-group pl-3 pr-3">
+                <h4>New Todo</h4>
+                <input type="text"
+                       #toDoTxtInput
+                       class="form-control"
+                       placeholder="New Todo"
+                       (keyup.enter)="addTodo(toDoTxtInput)">
+            </div>
+            <ul class="list-group bg-white"
+                *ngIf="todoList.toDos$ | async as toDos">
+                <li *ngFor="let toDo of toDos"
+                    style="line-height: 39px;"
+                    class="list-group-item border border-top-0">
+                    {{toDo.name}}
+                    <button class="btn btn-danger btn-sm float-right"
+                            (click)="deleteTodo(toDo.id)"><i class="fa fa-trash"></i></button>
+                    <button class="btn btn-light btn-sm float-right"
+                            (click)="openToDo = ((openToDo==toDo.id) ? '' : toDo.id);editToDo = ''">
+                        <i [class.fa-folder-o]="openToDo!=toDo.id"
+                           [class.fa-folder-open-o]="openToDo==toDo.id"
+                           class="fa"></i>
+                    </button>
+                    <button class="btn btn-primary btn-sm float-right"
+                            (click)="editToDo = ((editToDo==toDo.id) ? '' : toDo.id);openToDo = ''">
+                        <i [class.fa-pencil]="editToDo!=toDo.id"
+                           [class.fa-pencil-square-o]="editToDo==toDo.id"
+                           class="fa"></i>
+                    </button>
+
+
+                    <form *ngIf="editToDo==toDo.id"
+                          #form="ngForm">
+                        <div class="form-row w-100 mt-4">
+                            <!-- Type -->
+                            <div class="col-sm-12 col-xs-12 col-md-4">
+
+                                <mat-form-field class="example-full-width"
+                                                *ngIf="types$ | async as types">
+                                    <mat-label>Type</mat-label>
+                                    <mat-select name="type"
+                                                required
+                                                [(ngModel)]="toDo.type">
+                                        <mat-option *ngFor="let option of types"
+                                                    [value]="option.id">{{option.name}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                            </div>
+                            <div class="col-sm-12 col-xs-12 col-md-4">
+                                <mat-form-field class="example-full-width">
+                                    <input matInput
+                                           name="name"
+                                           required
+                                           [(ngModel)]="toDo.name"
+                                           placeholder="Name"
+                                           autocomplete="off"
+                                           type="text">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-sm-12 col-xs-12 col-md-4">
+                                <mat-form-field class="example-full-width">
+                                    <input matInput
+                                           name="amount"
+                                           required
+                                           [(ngModel)]="toDo.amount"
+                                           placeholder="Amount"
+                                           autocomplete="off"
+                                           type="number">
+                                </mat-form-field>
+                            </div>
+                            <!-- Categories -->
+                            <div class="col-sm-12 col-xs-12 col-md-4">
+
+                                <mat-form-field class="example-full-width" *ngIf="categories$ | async as categories">
+                                    <mat-label>Category</mat-label>
+                                    <mat-select name="category" required [(ngModel)]="toDo.category">
+                                        <mat-option *ngFor="let option of categories" [value]="option.id">{{option.name}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                            </div>
+                            <div class="col-sm-12 col-xs-12 col-md-4">
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Start Date</mat-label>
+                                    <input matInput
+                                           autocomplete="off"
+                                           name="startDate"
+                                           required
+                                           [(ngModel)]="toDo.startDate"
+                                           #startDateInput
+                                           [max]="getDateFromString(endDateInput.value)"
+                                           [matDatepicker]="startDatePicker">
+                                    <mat-datepicker-toggle matSuffix
+                                                           [for]="startDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #startDatePicker></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-sm-12 col-xs-12 col-md-4">
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>End Date</mat-label>
+                                    <input matInput
+                                           autocomplete="off"
+                                           name="endDate"
+                                           required
+                                           [min]="getDateFromString(startDateInput.value)"
+                                           [(ngModel)]="toDo.endDate"
+                                           #endDateInput
+                                           [matDatepicker]="endDatePicker">
+                                    <mat-datepicker-toggle matSuffix
+                                                           [for]="endDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #endDatePicker></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                            <!-- Tax Exemptions -->
+                            <div class="col-sm-12 col-xs-12 col-md-4" *ngIf="toDo.type=='expenses'">
+                                <mat-form-field class="example-full-width" *ngIf="taxExemptions$ | async as taxExemptions">
+                                    <mat-label>Tax Exemptions</mat-label>
+                                    <mat-select name="taxExemptions" required [(ngModel)]="toDo.taxExemptions">
+                                        <mat-option *ngFor="let option of taxExemptions" [value]="option.id">{{option.name}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-sm-12 col-xs-12 col-md-4">
+                                <mat-form-field class="example-full-width">
+                                    <input matInput
+                                           name="remarks"
+                                           [(ngModel)]="toDo.remarks"
+                                           placeholder="Remarks"
+                                           autocomplete="off"
+                                           type="text">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-sm-12 col-xs-12 col-md-4">
+                                <div class="row">
+                                    <div class="col-4"
+                                         *ngIf="toDo.repeat != 'never'">
+                                        <mat-form-field class="example-full-width">
+                                            <input matInput
+                                                   name="interval"
+                                                   required
+                                                   [(ngModel)]="toDo.interval"
+                                                   placeholder="Repeat Interval"
+                                                   autocomplete="off"
+                                                   type="number">
+                                        </mat-form-field>
+                                    </div>
+                                    <div [class.col-8]="toDo.repeat != 'never'" [class.col-12]="toDo.repeat == 'never'">
+                                        <mat-form-field class="example-full-width"
+                                                        *ngIf="repeatOptions$ | async as repeatOptions">
+                                            <mat-label>Repeat Every</mat-label>
+                                            <mat-select name="repeat"
+                                                        required
+                                                        [(ngModel)]="toDo.repeat">
+                                                <mat-option *ngFor="let option of repeatOptions"
+                                                            [value]="option.id">{{option.name}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit"
+                                (click)="updateTodo()"
+                                class="btn btn-primary">Sign in
+                        </button>
+                        <pre>{{form.value|json}}</pre>
+                    </form>
+
+                    <ul class="list-group bg-white border-top mt-4"
+                        *ngIf="openToDo==toDo.id"
+                        style="max-height: 300px;overflow-y: auto;">
+                        <li class="list-group-item border border-top-0">Test 123</li>
+                        <li class="list-group-item border border-top-0">Test 123</li>
+                        <li class="list-group-item border border-top-0">Test 123</li>
+                        <li class="list-group-item border border-top-0">Test 123</li>
+                        <li class="list-group-item border border-top-0">Test 123</li>
+                        <li class="list-group-item border border-top-0">Test 123</li>
+                        <li class="list-group-item border border-top-0">Test 123</li>
+                        <li class="list-group-item border border-top-0">Test 123</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

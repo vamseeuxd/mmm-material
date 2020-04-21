@@ -5,7 +5,7 @@ import {map, switchMap} from 'rxjs/operators';
 import {TransactionType} from '../value-objects/transaction-type-enum';
 import {BehaviorSubject, combineLatest, of} from 'rxjs';
 import {NgForm} from '@angular/forms';
-import {BusyIndicatorService} from '../services/busy-indicator.service';
+import {BusyIndicatorService} from '../../utils/busy-indicator.service';
 import {ITransaction} from '../value-objects/transaction-interface';
 
 @Component({

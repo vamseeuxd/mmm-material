@@ -6,7 +6,7 @@ import {Router, NavigationEnd, NavigationStart} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
 import PerfectScrollbar from 'perfect-scrollbar';
 import * as $ from 'jquery';
-import {BusyIndicatorService} from '../../services/busy-indicator.service';
+import {BusyIndicatorService} from '../../utils/busy-indicator.service';
 
 @Component({
     selector: 'app-admin-layout',
